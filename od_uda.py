@@ -11,7 +11,7 @@ SSD_v2_GRAPH_FILE = 'ssd_mobilenet_v2_coco_2018_03_29/frozen_inference_graph.pb'
 SSDLITE_GRAPH_FILE = 'ssdlite_mobilenet_v2_coco_2018_05_09/frozen_inference_graph.pb'
 RFCN_GRAPH_FILE = 'rfcn_resnet101_coco_2018_01_28/frozen_inference_graph.pb'
 FASTER_RCNN_GRAPH_FILE = 'faster_rcnn_resnet50_coco_2018_01_28/frozen_inference_graph.pb'
-SAM_GRAPH_FILE = 'sam/frozen_inference_graph.pb'
+SAM_GRAPH_FILE = 'model/frozen_inference_graph.pb'
 
 
 # detection_graph = load_graph(SSD_GRAPH_FILE)
@@ -36,7 +36,7 @@ detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
 
 
 def verify_on_sample_image():
-    image = Image.open('./test_images/image2.jpg')
+    image = Image.open('./dataset/sim_data_capture/left0028.jpg')
     image_np = np.expand_dims(np.asanyarray(image, dtype=np.uint8), 0)
 
     with tf.Session(graph=detection_graph) as sess:
@@ -86,7 +86,7 @@ def pipeline(img):
     scores = np.squeeze(scores)
     classes = np.squeeze(classes)
 
-    confidence_cutoff = 0.8
+    confidence_cutoff = 0.5
 
     # Filter boxes with a confidence score less than `confidence_cutoff`
     boxes, scores, classes = filter_boxes(confidence_cutoff, boxes, scores, classes)
@@ -104,7 +104,7 @@ def pipeline(img):
 
 def process_video():
     global tf_session
-    clip = VideoFileClip('driving.mp4')
+    clip = VideoFileClip('images.mp4')
 
     with tf.Session(graph=detection_graph) as sess:
         tf_session = sess
@@ -115,5 +115,5 @@ def process_video():
 
 
 if __name__ == "__main__":
-    verify_on_sample_image()
-    # process_video()
+    # verify_on_sample_image()
+    process_video()
